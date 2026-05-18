@@ -20,6 +20,12 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dexie:
+        specifier: ^4.4.2
+        version: 4.4.2
+      dexie-react-hooks:
+        specifier: ^4.4.0
+        version: 4.4.0(dexie@4.4.2)(react@19.2.6)
       lucide-react:
         specifier: ^1.16.0
         version: 1.16.0(react@19.2.6)
@@ -75,6 +81,12 @@ importers:
       globals:
         specifier: ^17.6.0
         version: 17.6.0
+      lefthook:
+        specifier: ^2.1.6
+        version: 2.1.6
+      prettier:
+        specifier: ^3.8.3
+        version: 3.8.3
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -1770,6 +1782,15 @@ packages:
   detect-node-es@1.1.0:
     resolution: {integrity: sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==}
 
+  dexie-react-hooks@4.4.0:
+    resolution: {integrity: sha512-ObLXBS5+4BJU8vtSvBx6b9fY6zZYgniAtwxzjCHsUQadgbqYN6935X2/1TWw4Rf2N1aZV1io5/ziox4vKuxABA==}
+    peerDependencies:
+      dexie: '>=4.2.0-alpha.1 <5.0.0'
+      react: '>=16'
+
+  dexie@4.4.2:
+    resolution: {integrity: sha512-zMtV8q79EFE5U8FKZvt0Y/77PCU/Hr/RDxv1EDeo228L+m/HTbeN2AjoQm674rhQCX8n3ljK87lajt7UQuZfvw==}
+
   diff@8.0.4:
     resolution: {integrity: sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==}
     engines: {node: '>=0.3.1'}
@@ -2300,6 +2321,60 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
+  lefthook-darwin-arm64@2.1.6:
+    resolution: {integrity: sha512-hyB7eeiX78BS66f70byTJacDLC/xV1vgMv9n+idFUsrM7J3Udd/ag9Ag5NP3t0eN0EqQqAtrNnt35EH01lxnRQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  lefthook-darwin-x64@2.1.6:
+    resolution: {integrity: sha512-5Ka6cFxiH83krt+OMRQtmS6zqoZR5SLXSudLjTbZA1c3ZqF0+dqkeb4XcB6plx6WR0GFizabuc6Bi3iXPIe1eQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  lefthook-freebsd-arm64@2.1.6:
+    resolution: {integrity: sha512-VswyOg5CVN3rMaOJ2HtnkltiMKgFHW/wouWxXsV8RxSa4tgWOKxM0EmSXi8qc2jX+LRga6B0uOY6toXS01zWxA==}
+    cpu: [arm64]
+    os: [freebsd]
+
+  lefthook-freebsd-x64@2.1.6:
+    resolution: {integrity: sha512-vXsCUFYuVwrVWwcypB7Zt2Hf+5pl1V1la7ZfvGYZaTRURu0zF/XUnMF/nOz/PebGv0f4x/iOWXWwP7E42xRWsg==}
+    cpu: [x64]
+    os: [freebsd]
+
+  lefthook-linux-arm64@2.1.6:
+    resolution: {integrity: sha512-WDJiQhJdZOvKORZd+kF/ms2l6NSsXzdA9ahflyr65V90AC4jES223W8VtEMbGPUtHuGWMEZ/v/XvwlWv0Ioz9g==}
+    cpu: [arm64]
+    os: [linux]
+
+  lefthook-linux-x64@2.1.6:
+    resolution: {integrity: sha512-C18nCd7nTX1AVL4TcvwMmLAO1VI1OuGluIOTjiPkBQ746Ls1HhL5rl//jMPACmT28YmxIQJ2ZcLPNmhvEVBZvw==}
+    cpu: [x64]
+    os: [linux]
+
+  lefthook-openbsd-arm64@2.1.6:
+    resolution: {integrity: sha512-mZOMxM8HiPxVFXDO3PtCUbH4GB8rkveXhsgXF27oAZTYVzQ3gO9vT6r/pxit6msqRXz3fvcwimLVJgb8eRsa8A==}
+    cpu: [arm64]
+    os: [openbsd]
+
+  lefthook-openbsd-x64@2.1.6:
+    resolution: {integrity: sha512-sG9ALLZSnnMOfXu+B7SmxFhJhuoAh4bqi5En5aaHJET48TqrLOcWWZuH+7ArFM6gr/U5KfSUvdmHFmY8WqCcIg==}
+    cpu: [x64]
+    os: [openbsd]
+
+  lefthook-windows-arm64@2.1.6:
+    resolution: {integrity: sha512-lD8yFWY4Csuljd0Rqs7EQaySC0VvDf7V3rN1FhRMUISTRDHutebIom1Loc8ckQPvKYGC6mftT9k0GvipsS+Brw==}
+    cpu: [arm64]
+    os: [win32]
+
+  lefthook-windows-x64@2.1.6:
+    resolution: {integrity: sha512-q4z2n3xucLscoWiyMwFViEj3N8MDSkPulMwcJYuCYFHoPhP1h+icqNu7QRLGYj6AnVrCQweiUJY3Tb2X+GbD/A==}
+    cpu: [x64]
+    os: [win32]
+
+  lefthook@2.1.6:
+    resolution: {integrity: sha512-w9sBoR0mdN+kJc3SB85VzpiAAl451/rxdCRcZlwW71QLjkeH3EBQFgc4VMj5apePychYDHAlqEWTB8J8JK/j1Q==}
+    hasBin: true
+
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
@@ -2612,6 +2687,11 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+
+  prettier@3.8.3:
+    resolution: {integrity: sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   pretty-ms@9.3.0:
     resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
@@ -4854,6 +4934,13 @@ snapshots:
 
   detect-node-es@1.1.0: {}
 
+  dexie-react-hooks@4.4.0(dexie@4.4.2)(react@19.2.6):
+    dependencies:
+      dexie: 4.4.2
+      react: 19.2.6
+
+  dexie@4.4.2: {}
+
   diff@8.0.4: {}
 
   dotenv@17.4.2: {}
@@ -5365,6 +5452,49 @@ snapshots:
 
   kleur@4.1.5: {}
 
+  lefthook-darwin-arm64@2.1.6:
+    optional: true
+
+  lefthook-darwin-x64@2.1.6:
+    optional: true
+
+  lefthook-freebsd-arm64@2.1.6:
+    optional: true
+
+  lefthook-freebsd-x64@2.1.6:
+    optional: true
+
+  lefthook-linux-arm64@2.1.6:
+    optional: true
+
+  lefthook-linux-x64@2.1.6:
+    optional: true
+
+  lefthook-openbsd-arm64@2.1.6:
+    optional: true
+
+  lefthook-openbsd-x64@2.1.6:
+    optional: true
+
+  lefthook-windows-arm64@2.1.6:
+    optional: true
+
+  lefthook-windows-x64@2.1.6:
+    optional: true
+
+  lefthook@2.1.6:
+    optionalDependencies:
+      lefthook-darwin-arm64: 2.1.6
+      lefthook-darwin-x64: 2.1.6
+      lefthook-freebsd-arm64: 2.1.6
+      lefthook-freebsd-x64: 2.1.6
+      lefthook-linux-arm64: 2.1.6
+      lefthook-linux-x64: 2.1.6
+      lefthook-openbsd-arm64: 2.1.6
+      lefthook-openbsd-x64: 2.1.6
+      lefthook-windows-arm64: 2.1.6
+      lefthook-windows-x64: 2.1.6
+
   levn@0.4.1:
     dependencies:
       prelude-ls: 1.2.1
@@ -5638,6 +5768,8 @@ snapshots:
   powershell-utils@0.1.0: {}
 
   prelude-ls@1.2.1: {}
+
+  prettier@3.8.3: {}
 
   pretty-ms@9.3.0:
     dependencies:
