@@ -1,4 +1,6 @@
 import { useId } from 'react'
+import { Link } from '@tanstack/react-router'
+import { ChevronRight } from 'lucide-react'
 import { useAssetSummary, assetSummaryRepo } from '@/entities/asset-summary'
 import type { AssetTypeMeta } from '@/entities/asset'
 import {
@@ -41,7 +43,19 @@ export function AssetSummaryCard({ type }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle id={titleId}>{type.label}</CardTitle>
+        <CardTitle id={titleId} className="flex items-center justify-between">
+          <span>{type.label}</span>
+          {type.value === 'stock' && (
+            <Link
+              to="/stocks"
+              aria-label="주식 상세 페이지로 이동"
+              className="text-muted-foreground hover:text-foreground inline-flex items-center text-sm"
+            >
+              상세
+              <ChevronRight className="size-4" />
+            </Link>
+          )}
+        </CardTitle>
         <CardDescription>{type.description}</CardDescription>
       </CardHeader>
       <CardContent>

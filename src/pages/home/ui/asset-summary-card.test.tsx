@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { ReactNode } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { AssetTypeMeta } from '@/entities/asset'
@@ -15,6 +16,14 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@/entities/asset-summary', () => ({
   useAssetSummary: mocks.useAssetSummary,
   assetSummaryRepo: { upsert: mocks.upsert },
+}))
+
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({ to, children, ...rest }: { to: string; children: ReactNode }) => (
+    <a href={to} {...rest}>
+      {children}
+    </a>
+  ),
 }))
 
 const stockType: AssetTypeMeta = {

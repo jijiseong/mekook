@@ -19,13 +19,13 @@ export function HomePage() {
             <CurrencyToggle />
           </header>
 
+          <TargetAllocationSection />
+
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {ASSET_TYPES.map((type) => (
               <AssetSummaryCard key={type.value} type={type} />
             ))}
           </section>
-
-          <TargetAllocationSection />
         </div>
       </main>
     </CurrencyProvider>
