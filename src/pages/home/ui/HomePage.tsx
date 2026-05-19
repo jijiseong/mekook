@@ -2,6 +2,7 @@ import { ASSET_TYPES } from '@/entities/asset'
 import { CurrencyProvider } from '@/shared/lib/currency-provider'
 import { CurrencyToggle } from '@/shared/ui/currency-toggle'
 import { AssetSummaryCard } from './asset-summary-card'
+import { TargetAllocationSection } from './target-allocation-section'
 
 export function HomePage() {
   return (
@@ -23,6 +24,8 @@ export function HomePage() {
               <AssetSummaryCard key={type.value} type={type} />
             ))}
           </section>
+
+          <TargetAllocationSection />
         </div>
       </main>
     </CurrencyProvider>

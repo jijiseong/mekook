@@ -3,6 +3,7 @@ import type { Asset } from '@/entities/asset'
 import type { Transaction } from '@/entities/transaction'
 import type { PriceSnapshot } from '@/entities/price-snapshot'
 import type { AssetSummary } from '@/entities/asset-summary'
+import type { TargetAllocation } from '@/entities/target-allocation'
 
 // FSD: shared가 entities를 import하는 것은 엄격한 레이어 규칙 위반이지만,
 // 단일 Dexie 인스턴스에 모든 테이블 스키마를 모아야 하므로 실용적으로 허용.
@@ -13,6 +14,7 @@ export class MekookDB extends Dexie {
   declare transactions: EntityTable<Transaction, 'id'>
   declare priceSnapshots: EntityTable<PriceSnapshot, 'id'>
   declare assetSummaries: EntityTable<AssetSummary, 'type'>
+  declare targetAllocations: EntityTable<TargetAllocation, 'type'>
 
   constructor() {
     super('mekook')
@@ -23,6 +25,9 @@ export class MekookDB extends Dexie {
     })
     this.version(2).stores({
       assetSummaries: 'type, updatedAt',
+    })
+    this.version(3).stores({
+      targetAllocations: 'type, updatedAt',
     })
   }
 }
