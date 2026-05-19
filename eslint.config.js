@@ -35,4 +35,11 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
+  {
+    // TanStack Router는 라우트 파일에서 const Route export를 요구
+    files: ['src/routes/**/*.{ts,tsx}', 'src/routeTree.gen.ts'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
