@@ -22,6 +22,7 @@ import {
 } from '../lib/rebalance'
 import { effectiveTargetRatio } from '../lib/effective-targets'
 import { formatMoney, formatRatio, formatSignedMoney } from '../lib/format'
+import { PortfolioChart } from './portfolio-chart'
 import { PortfolioRow } from './portfolio-row'
 
 const SUPPORTED_CURRENCIES = ['KRW', 'USD'] satisfies readonly Currency[]
@@ -209,6 +210,17 @@ export function PortfolioTable() {
           </div>
         </CardHeader>
       </Card>
+
+      {rows.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>현재 vs 목표</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PortfolioChart rows={rows} />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
