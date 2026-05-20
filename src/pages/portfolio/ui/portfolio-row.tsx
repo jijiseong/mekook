@@ -15,9 +15,10 @@ const CASH_CURRENCIES: readonly Currency[] = CURRENCIES.map((c) => c.value)
 interface Props {
   row: RebalanceRow
   displayCurrency: Currency
+  indented?: boolean
 }
 
-export function PortfolioRow({ row, displayCurrency }: Props) {
+export function PortfolioRow({ row, displayCurrency, indented }: Props) {
   const { asset, holding, livePrice, effectivePrice, valueInAssetCcy } = row
   const isStock = asset.type === 'stock'
   const isCash = asset.type === 'cash'
@@ -66,7 +67,7 @@ export function PortfolioRow({ row, displayCurrency }: Props) {
   return (
     <div className="grid grid-cols-1 items-center gap-3 border-b py-3 last:border-b-0 sm:grid-cols-[2fr_1.4fr_1.2fr_0.8fr_1.6fr_auto]">
       {/* 자산 */}
-      <div className="flex flex-col">
+      <div className={cn('flex flex-col', indented && 'pl-4')}>
         <span className="font-medium">{asset.name || asset.symbol}</span>
         {isStock && asset.name && (
           <span className="text-muted-foreground text-xs">{asset.symbol}</span>
