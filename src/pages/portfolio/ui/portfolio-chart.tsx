@@ -1,5 +1,6 @@
 import { Cell, Pie, PieChart } from 'recharts'
 
+import { getAssetColor } from '@/shared/lib/asset-color'
 import { cn } from '@/shared/lib/utils'
 import {
   ChartContainer,
@@ -13,41 +14,37 @@ interface Props {
   rows: RebalanceRow[]
 }
 
-const PALETTE = [
-  'var(--color-chart-1)',
-  'var(--color-chart-2)',
-  'var(--color-chart-3)',
-  'var(--color-chart-4)',
-  'var(--color-chart-5)',
-]
-
 const chartConfig = {} satisfies ChartConfig
 
 const RADIAN = Math.PI / 180
 
+function assetKey(row: RebalanceRow): string {
+  return row.asset.symbol || row.asset.name
+}
+
 export function PortfolioChart({ rows }: Props) {
   if (rows.length === 0) return null
 
-  const innerData = rows.map((row, i) => ({
-    name: row.asset.symbol || row.asset.name,
+  const innerData = rows.map((row) => ({
+    name: assetKey(row),
     value: row.currentRatio * 100,
-    color: PALETTE[i % PALETTE.length],
+    color: getAssetColor(assetKey(row)),
   }))
 
-  const outerData = rows.map((row, i) => {
+  const outerData = rows.map((row) => {
     const current = row.currentRatio * 100
     const target = row.target * 100
     return {
-      name: row.asset.symbol || row.asset.name,
+      name: assetKey(row),
       value: target,
       delta: target - current,
       current,
-      color: PALETTE[i % PALETTE.length],
+      color: getAssetColor(assetKey(row)),
     }
   })
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-3">
       <ChartContainer config={chartConfig} className="h-72 w-full max-w-sm">
         <PieChart>
           {/* 안쪽: 현재 비중 */}
@@ -61,8 +58,8 @@ export function PortfolioChart({ rows }: Props) {
             paddingAngle={2}
             stroke="none"
           >
-            {innerData.map((d, i) => (
-              <Cell key={i} fill={d.color} />
+            {innerData.map((d) => (
+              <Cell key={d.name} fill={d.color} />
             ))}
           </Pie>
 
@@ -108,8 +105,8 @@ export function PortfolioChart({ rows }: Props) {
               )
             }}
           >
-            {outerData.map((d, i) => (
-              <Cell key={i} fill={d.color} fillOpacity={0.4} />
+            {outerData.map((d) => (
+              <Cell key={d.name} fill={d.color} fillOpacity={0.4} />
             ))}
           </Pie>
 
@@ -119,16 +116,20 @@ export function PortfolioChart({ rows }: Props) {
               const item = payload[0]
               if (!item) return null
               const name = typeof item.name === 'string' ? item.name : ''
-              const row = rows.find(
-                (r) => (r.asset.symbol || r.asset.name) === name,
-              )
+              const row = rows.find((r) => assetKey(r) === name)
               if (!row) return null
               const current = row.currentRatio * 100
               const target = row.target * 100
               const delta = target - current
               return (
                 <div className="grid min-w-36 gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-                  <div className="font-medium">{name}</div>
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <span
+                      className="h-2 w-2 shrink-0 rounded-sm"
+                      style={{ backgroundColor: getAssetColor(name) }}
+                    />
+                    {name}
+                  </div>
                   <div className="flex justify-between gap-4">
                     <span className="text-muted-foreground">현재</span>
                     <span className="font-mono font-medium tabular-nums">
@@ -163,6 +164,22 @@ export function PortfolioChart({ rows }: Props) {
           />
         </PieChart>
       </ChartContainer>
+
+      {/* 종목 범례 */}
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+        {rows.map((row) => {
+          const key = assetKey(row)
+          return (
+            <div key={key} className="flex items-center gap-1.5 text-xs">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-sm"
+                style={{ backgroundColor: getAssetColor(key) }}
+              />
+              <span className="text-muted-foreground">{key}</span>
+            </div>
+          )
+        })}
+      </div>
 
       <div className="flex items-center gap-6 text-xs text-muted-foreground">
         <span>안쪽 — 현재</span>
