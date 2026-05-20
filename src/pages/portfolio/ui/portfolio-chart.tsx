@@ -25,20 +25,21 @@ function assetKey(row: RebalanceRow): string {
 export function PortfolioChart({ rows }: Props) {
   if (rows.length === 0) return null
 
+  // 안쪽: 목표 비중 (기준)
   const innerData = rows.map((row) => ({
     name: assetKey(row),
-    value: row.currentRatio * 100,
+    value: row.target * 100,
     color: getAssetColor(assetKey(row)),
   }))
 
+  // 바깥: 현재 비중 (현재 보유 상태)
   const outerData = rows.map((row) => {
     const current = row.currentRatio * 100
     const target = row.target * 100
     return {
       name: assetKey(row),
-      value: target,
-      delta: target - current,
-      current,
+      value: current,
+      delta: current - target, // 양수 = 목표보다 많이 보유
       color: getAssetColor(assetKey(row)),
     }
   })
@@ -47,7 +48,7 @@ export function PortfolioChart({ rows }: Props) {
     <div className="flex flex-col items-center gap-3">
       <ChartContainer config={chartConfig} className="h-72 w-full max-w-sm">
         <PieChart>
-          {/* 안쪽: 현재 비중 */}
+          {/* 안쪽: 목표 비중 */}
           <Pie
             data={innerData}
             dataKey="value"
@@ -63,7 +64,7 @@ export function PortfolioChart({ rows }: Props) {
             ))}
           </Pie>
 
-          {/* 바깥: 목표 비중 */}
+          {/* 바깥: 현재 비중 */}
           <Pie
             data={outerData}
             dataKey="value"
@@ -90,6 +91,7 @@ export function PortfolioChart({ rows }: Props) {
               const radius = nr + 16
               const x = ncx + radius * Math.cos(-nMid * RADIAN)
               const y = ncy + radius * Math.sin(-nMid * RADIAN)
+              // 양수(많이 보유) → rose, 음수(부족) → emerald
               return (
                 <text
                   x={x}
@@ -97,7 +99,7 @@ export function PortfolioChart({ rows }: Props) {
                   textAnchor="middle"
                   dominantBaseline="central"
                   fontSize={10}
-                  fill={delta > 0 ? '#16a34a' : '#e11d48'}
+                  fill={delta > 0 ? '#e11d48' : '#16a34a'}
                 >
                   {delta > 0 ? '+' : ''}
                   {formatRatio(delta / 100)}
@@ -120,7 +122,7 @@ export function PortfolioChart({ rows }: Props) {
               if (!row) return null
               const current = row.currentRatio * 100
               const target = row.target * 100
-              const delta = target - current
+              const delta = current - target
               return (
                 <div className="grid min-w-36 gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
                   <div className="flex items-center gap-1.5 font-medium">
@@ -148,9 +150,9 @@ export function PortfolioChart({ rows }: Props) {
                       className={cn(
                         'font-mono font-medium tabular-nums',
                         delta > 0
-                          ? 'text-emerald-600'
+                          ? 'text-rose-600'
                           : delta < 0
-                            ? 'text-rose-600'
+                            ? 'text-emerald-600'
                             : 'text-muted-foreground',
                       )}
                     >
@@ -165,25 +167,44 @@ export function PortfolioChart({ rows }: Props) {
         </PieChart>
       </ChartContainer>
 
-      {/* 종목 범례 */}
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+      {/* 종목 범례: 현재가 목표보다 얼마나 많은지/적은지 */}
+      <div className="flex flex-col items-center gap-1.5">
         {rows.map((row) => {
           const key = assetKey(row)
+          const current = row.currentRatio * 100
+          const target = row.target * 100
+          const delta = current - target
+          const absDelta = Math.abs(delta)
+          const isBalanced = absDelta < 0.1
+
           return (
             <div key={key} className="flex items-center gap-1.5 text-xs">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-sm"
                 style={{ backgroundColor: getAssetColor(key) }}
               />
-              <span className="text-muted-foreground">{key}</span>
+              <span className="font-medium">{key}</span>
+              <span
+                className={cn(
+                  'text-muted-foreground',
+                  !isBalanced && delta > 0 && 'text-rose-600',
+                  !isBalanced && delta < 0 && 'text-emerald-600',
+                )}
+              >
+                {isBalanced
+                  ? '목표와 동일'
+                  : delta > 0
+                    ? `목표보다 ${formatRatio(absDelta / 100)} 많음`
+                    : `목표보다 ${formatRatio(absDelta / 100)} 적음`}
+              </span>
             </div>
           )
         })}
       </div>
 
       <div className="flex items-center gap-6 text-xs text-muted-foreground">
-        <span>안쪽 — 현재</span>
-        <span className="opacity-50">바깥 — 목표</span>
+        <span>안쪽 — 목표</span>
+        <span className="opacity-60">바깥 — 현재</span>
       </div>
     </div>
   )
