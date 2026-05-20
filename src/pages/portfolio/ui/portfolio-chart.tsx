@@ -82,8 +82,13 @@ export function PortfolioChart({ rows }: Props) {
               const ncy = typeof cy === 'number' ? cy : 0
               const nMid = typeof midAngle === 'number' ? midAngle : 0
               const nr = typeof outerRadius === 'number' ? outerRadius : 0
-              const p = payload as Record<string, unknown>
-              const delta = typeof p?.delta === 'number' ? p.delta : 0
+              const delta =
+                payload !== null &&
+                typeof payload === 'object' &&
+                'delta' in payload &&
+                typeof payload.delta === 'number'
+                  ? payload.delta
+                  : 0
               if (Math.abs(delta) < 0.5) return null
               const radius = nr + 16
               const x = ncx + radius * Math.cos(-nMid * RADIAN)
