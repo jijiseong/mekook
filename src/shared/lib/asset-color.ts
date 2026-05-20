@@ -1,5 +1,3 @@
-const TOTAL = 5
-
 function hashCode(str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
@@ -9,5 +7,6 @@ function hashCode(str: string): number {
 }
 
 export function getAssetColor(identifier: string): string {
-  return `var(--color-chart-${(hashCode(identifier) % TOTAL) + 1})`
+  const hue = hashCode(identifier) % 360
+  return `oklch(0.72 0.18 ${hue})`
 }

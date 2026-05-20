@@ -21,15 +21,11 @@ import {
   InputGroupInput,
 } from '@/shared/ui/input-group'
 import { Label } from '@/shared/ui/label'
-import { Button } from '@/shared/ui/button'
+import { ConfirmButton } from '@/shared/ui/confirm-button'
 import { cn } from '@/shared/lib/utils'
+import { getAssetColor } from '@/shared/lib/asset-color'
 import { AllocationPie } from './allocation-pie'
 import { AddAssetDialog } from './add-asset-dialog'
-
-function colorFor(index: number): string {
-  const hue = (index * 47) % 360
-  return `oklch(0.72 0.18 ${hue})`
-}
 
 interface DraftState {
   stockCat: number // 0–1 fraction
@@ -77,7 +73,7 @@ export function TargetAllocationSection() {
       id: s.id ?? i,
       label: s.name || s.symbol,
       ratio: stockCat * (subs[i] ?? 0),
-      color: colorFor(i),
+      color: getAssetColor(s.symbol),
     })),
     ...(cashAsset
       ? [
@@ -85,7 +81,7 @@ export function TargetAllocationSection() {
             id: cashAsset.id ?? 'cash',
             label: `현금 (${cashAsset.currency})`,
             ratio: cashCat,
-            color: colorFor(stocks.length),
+            color: getAssetColor(cashAsset.currency),
           },
         ]
       : []),
@@ -157,7 +153,7 @@ export function TargetAllocationSection() {
                   <StockSubRow
                     key={s.id ?? s.symbol}
                     stock={s}
-                    color={colorFor(i)}
+                    color={getAssetColor(s.symbol)}
                     value={subs[i] ?? 0}
                     onChange={(raw) => updateSub(i, raw)}
                     onBlur={commit}
@@ -312,14 +308,18 @@ function StockSubRow({
         />
         <InputGroupAddon align="inline-end">%</InputGroupAddon>
       </InputGroup>
-      <Button
+      <ConfirmButton
         variant="ghost"
         size="icon"
-        onClick={remove}
+        confirmVariant="destructive"
+        title="종목 삭제"
+        description="이 종목을 삭제하시겠습니까? 되돌릴 수 없습니다."
+        confirmText="삭제"
+        onConfirm={remove}
         aria-label="종목 삭제"
       >
         <Trash2 className="size-4" />
-      </Button>
+      </ConfirmButton>
     </div>
   )
 }
