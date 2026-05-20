@@ -60,7 +60,7 @@ export function PortfolioChart({ rows }: Props) {
             stroke="none"
           >
             {innerData.map((d) => (
-              <Cell key={d.name} fill={d.color} />
+              <Cell key={d.name} fill={d.color} fillOpacity={0.4} />
             ))}
           </Pie>
 
@@ -99,7 +99,7 @@ export function PortfolioChart({ rows }: Props) {
                   textAnchor="middle"
                   dominantBaseline="central"
                   fontSize={10}
-                  fill={delta > 0 ? '#e11d48' : '#16a34a'}
+                  fill={delta > 0 ? '#16a34a' : '#e11d48'}
                 >
                   {delta > 0 ? '+' : ''}
                   {formatRatio(delta / 100)}
@@ -108,7 +108,7 @@ export function PortfolioChart({ rows }: Props) {
             }}
           >
             {outerData.map((d) => (
-              <Cell key={d.name} fill={d.color} fillOpacity={0.4} />
+              <Cell key={d.name} fill={d.color} />
             ))}
           </Pie>
 
@@ -150,9 +150,9 @@ export function PortfolioChart({ rows }: Props) {
                       className={cn(
                         'font-mono font-medium tabular-nums',
                         delta > 0
-                          ? 'text-rose-600'
+                          ? 'text-emerald-600'
                           : delta < 0
-                            ? 'text-emerald-600'
+                            ? 'text-rose-600'
                             : 'text-muted-foreground',
                       )}
                     >
@@ -167,36 +167,17 @@ export function PortfolioChart({ rows }: Props) {
         </PieChart>
       </ChartContainer>
 
-      {/* 종목 범례: 현재가 목표보다 얼마나 많은지/적은지 */}
-      <div className="flex flex-col items-center gap-1.5">
+      {/* 종목 범례 */}
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
         {rows.map((row) => {
           const key = assetKey(row)
-          const current = row.currentRatio * 100
-          const target = row.target * 100
-          const delta = current - target
-          const absDelta = Math.abs(delta)
-          const isBalanced = absDelta < 0.1
-
           return (
             <div key={key} className="flex items-center gap-1.5 text-xs">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-sm"
                 style={{ backgroundColor: getAssetColor(key) }}
               />
-              <span className="font-medium">{key}</span>
-              <span
-                className={cn(
-                  'text-muted-foreground',
-                  !isBalanced && delta > 0 && 'text-rose-600',
-                  !isBalanced && delta < 0 && 'text-emerald-600',
-                )}
-              >
-                {isBalanced
-                  ? '목표와 동일'
-                  : delta > 0
-                    ? `목표보다 ${formatRatio(absDelta / 100)} 많음`
-                    : `목표보다 ${formatRatio(absDelta / 100)} 적음`}
-              </span>
+              <span className="text-muted-foreground">{key}</span>
             </div>
           )
         })}
