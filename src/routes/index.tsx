@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { HomePage } from '@/pages/home'
+import { assetRepo } from '@/entities/asset'
+import { PortfolioPage } from '@/pages/portfolio'
 
 export const Route = createFileRoute('/')({
-  component: HomePage,
+  loader: () => assetRepo.ensureCashAsset('KRW'),
+  component: PortfolioPage,
 })
