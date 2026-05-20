@@ -1,7 +1,9 @@
 import { CurrencyProvider } from '@/shared/lib/currency-provider'
 import { CurrencyToggle } from '@/shared/ui/currency-toggle'
 import { TargetAllocationSection } from './ui/target-allocation-section'
-import { PortfolioTable } from './ui/portfolio-table'
+import { PortfolioSummary } from './ui/portfolio-summary'
+import { PortfolioChartsSection } from './ui/portfolio-charts-section'
+import { PortfolioAssets } from './ui/portfolio-assets'
 
 export function PortfolioPage() {
   return (
@@ -21,7 +23,9 @@ export function PortfolioPage() {
           </header>
 
           <TargetAllocationSection />
-          <PortfolioTable />
+          <PortfolioSummary />
+          <PortfolioChartsSection />
+          <PortfolioAssets />
         </div>
       </main>
     </CurrencyProvider>
