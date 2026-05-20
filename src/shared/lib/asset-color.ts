@@ -1,13 +1,10 @@
-function hashCode(str: string): number {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = (Math.imul(31, hash) + str.charCodeAt(i)) | 0
-  }
-  return Math.abs(hash)
-}
-
-// 황금각(137.508°) 곱셈 — 어떤 두 심볼도 hue 차이 최소 ~85° 보장
-export function getAssetColor(identifier: string): string {
-  const hue = Math.round((hashCode(identifier) * 137.508) % 360)
+// 전체 식별자 집합을 알파벳 정렬 후 균등 배분 — N개면 360/N° 간격 보장
+export function getAssetColor(
+  identifier: string,
+  allIdentifiers: readonly string[],
+): string {
+  const sorted = [...allIdentifiers].sort()
+  const idx = sorted.indexOf(identifier)
+  const hue = idx === -1 ? 0 : Math.round((idx / sorted.length) * 360)
   return `oklch(0.72 0.22 ${hue})`
 }

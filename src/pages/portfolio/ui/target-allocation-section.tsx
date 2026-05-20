@@ -68,12 +68,17 @@ export function TargetAllocationSection() {
   const subSum = subs.reduce((a, b) => a + b, 0) * 100
   const subBalanced = stocks.length === 0 || Math.abs(subSum - 100) < 0.05
 
+  const allIds = [
+    ...stocks.map((s) => s.symbol),
+    ...(cashAsset ? [cashAsset.currency] : []),
+  ]
+
   const pieItems = [
     ...stocks.map((s, i) => ({
       id: s.id ?? i,
       label: s.name || s.symbol,
       ratio: stockCat * (subs[i] ?? 0),
-      color: getAssetColor(s.symbol),
+      color: getAssetColor(s.symbol, allIds),
     })),
     ...(cashAsset
       ? [
@@ -81,7 +86,7 @@ export function TargetAllocationSection() {
             id: cashAsset.id ?? 'cash',
             label: `현금 (${cashAsset.currency})`,
             ratio: cashCat,
-            color: getAssetColor(cashAsset.currency),
+            color: getAssetColor(cashAsset.currency, allIds),
           },
         ]
       : []),
@@ -153,7 +158,7 @@ export function TargetAllocationSection() {
                   <StockSubRow
                     key={s.id ?? s.symbol}
                     stock={s}
-                    color={getAssetColor(s.symbol)}
+                    color={getAssetColor(s.symbol, allIds)}
                     value={subs[i] ?? 0}
                     onChange={(raw) => updateSub(i, raw)}
                     onBlur={commit}

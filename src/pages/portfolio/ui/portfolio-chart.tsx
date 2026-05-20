@@ -25,11 +25,13 @@ function assetKey(row: RebalanceRow): string {
 export function PortfolioChart({ rows }: Props) {
   if (rows.length === 0) return null
 
+  const allKeys = rows.map(assetKey)
+
   // 안쪽: 목표 비중 (기준)
   const innerData = rows.map((row) => ({
     name: assetKey(row),
     value: row.target * 100,
-    color: getAssetColor(assetKey(row)),
+    color: getAssetColor(assetKey(row), allKeys),
   }))
 
   // 바깥: 현재 비중 (현재 보유 상태)
@@ -39,8 +41,8 @@ export function PortfolioChart({ rows }: Props) {
     return {
       name: assetKey(row),
       value: current,
-      delta: current - target, // 양수 = 목표보다 많이 보유
-      color: getAssetColor(assetKey(row)),
+      delta: current - target,
+      color: getAssetColor(assetKey(row), allKeys),
     }
   })
 
@@ -128,7 +130,7 @@ export function PortfolioChart({ rows }: Props) {
                   <div className="flex items-center gap-1.5 font-medium">
                     <span
                       className="h-2 w-2 shrink-0 rounded-sm"
-                      style={{ backgroundColor: getAssetColor(name) }}
+                      style={{ backgroundColor: getAssetColor(name, allKeys) }}
                     />
                     {name}
                   </div>
@@ -175,7 +177,7 @@ export function PortfolioChart({ rows }: Props) {
             <div key={key} className="flex items-center gap-1.5 text-xs">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-sm"
-                style={{ backgroundColor: getAssetColor(key) }}
+                style={{ backgroundColor: getAssetColor(key, allKeys) }}
               />
               <span className="text-muted-foreground">{key}</span>
             </div>
