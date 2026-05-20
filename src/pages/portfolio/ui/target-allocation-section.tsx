@@ -24,7 +24,6 @@ import { Label } from '@/shared/ui/label'
 import { ConfirmButton } from '@/shared/ui/confirm-button'
 import { cn } from '@/shared/lib/utils'
 import { getAssetColor } from '@/shared/lib/asset-color'
-import { AllocationPie } from './allocation-pie'
 import { AddAssetDialog } from './add-asset-dialog'
 
 interface DraftState {
@@ -71,25 +70,6 @@ export function TargetAllocationSection() {
   const allIds = [
     ...stocks.map((s) => s.symbol),
     ...(cashAsset ? [cashAsset.currency] : []),
-  ]
-
-  const pieItems = [
-    ...stocks.map((s, i) => ({
-      id: s.id ?? i,
-      label: s.name || s.symbol,
-      ratio: stockCat * (subs[i] ?? 0),
-      color: getAssetColor(s.symbol, allIds),
-    })),
-    ...(cashAsset
-      ? [
-          {
-            id: cashAsset.id ?? 'cash',
-            label: `현금 (${cashAsset.currency})`,
-            ratio: cashCat,
-            color: getAssetColor(cashAsset.currency, allIds),
-          },
-        ]
-      : []),
   ]
 
   const updateCat = (category: AssetCategory, raw: string) => {
@@ -144,82 +124,74 @@ export function TargetAllocationSection() {
             종목을 추가하면 목표 비율을 설정할 수 있습니다.
           </p>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              {/* 주식 카테고리 */}
-              <CategoryRow
-                label="주식"
-                value={stockCat}
-                onChange={(raw) => updateCat('stock', raw)}
-                onBlur={commit}
-              />
-              <div className="ml-4 flex flex-col gap-2 border-l pl-4">
-                {stocks.map((s, i) => (
-                  <StockSubRow
-                    key={s.id ?? s.symbol}
-                    stock={s}
-                    color={getAssetColor(s.symbol, allIds)}
-                    value={subs[i] ?? 0}
-                    onChange={(raw) => updateSub(i, raw)}
-                    onBlur={commit}
-                  />
-                ))}
-                <div className="pt-1">
-                  <AddAssetDialog
-                    existingSymbols={stocks.map((s) => s.symbol.toUpperCase())}
-                  />
-                </div>
-                {stocks.length > 0 && (
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">자식 합계</span>
-                    <span
-                      className={cn(
-                        'tabular-nums',
-                        subBalanced
-                          ? 'text-muted-foreground'
-                          : 'text-amber-600',
-                      )}
-                    >
-                      {subSum.toFixed(1)}%
-                      {!subBalanced && (
-                        <span className="ml-1">(100%가 아닙니다)</span>
-                      )}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* 현금 카테고리 */}
-              {cashAsset && (
-                <CategoryRow
-                  label={`현금 (${cashAsset.currency})`}
-                  value={cashCat}
-                  onChange={(raw) => updateCat('cash', raw)}
+          <div className="flex flex-col gap-2">
+            {/* 주식 카테고리 */}
+            <CategoryRow
+              label="주식"
+              value={stockCat}
+              onChange={(raw) => updateCat('stock', raw)}
+              onBlur={commit}
+            />
+            <div className="ml-4 flex flex-col gap-2 border-l pl-4">
+              {stocks.map((s, i) => (
+                <StockSubRow
+                  key={s.id ?? s.symbol}
+                  stock={s}
+                  color={getAssetColor(s.symbol, allIds)}
+                  value={subs[i] ?? 0}
+                  onChange={(raw) => updateSub(i, raw)}
                   onBlur={commit}
                 />
-              )}
-
-              {/* 합계 */}
-              <div className="flex items-center justify-between border-t pt-3 text-sm">
-                <span className="font-medium">합계</span>
-                <span
-                  className={cn(
-                    'font-semibold tabular-nums',
-                    catBalanced ? 'text-foreground' : 'text-destructive',
-                  )}
-                >
-                  {catSum.toFixed(1)}%
-                  {!catBalanced && (
-                    <span className="ml-2 text-xs font-normal">
-                      (100%가 아닙니다)
-                    </span>
-                  )}
-                </span>
+              ))}
+              <div className="pt-1">
+                <AddAssetDialog
+                  existingSymbols={stocks.map((s) => s.symbol.toUpperCase())}
+                />
               </div>
+              {stocks.length > 0 && (
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">자식 합계</span>
+                  <span
+                    className={cn(
+                      'tabular-nums',
+                      subBalanced ? 'text-muted-foreground' : 'text-amber-600',
+                    )}
+                  >
+                    {subSum.toFixed(1)}%
+                    {!subBalanced && (
+                      <span className="ml-1">(100%가 아닙니다)</span>
+                    )}
+                  </span>
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-center">
-              <AllocationPie items={pieItems} />
+            {/* 현금 카테고리 */}
+            {cashAsset && (
+              <CategoryRow
+                label={`현금 (${cashAsset.currency})`}
+                value={cashCat}
+                onChange={(raw) => updateCat('cash', raw)}
+                onBlur={commit}
+              />
+            )}
+
+            {/* 합계 */}
+            <div className="flex items-center justify-between border-t pt-3 text-sm">
+              <span className="font-medium">합계</span>
+              <span
+                className={cn(
+                  'font-semibold tabular-nums',
+                  catBalanced ? 'text-foreground' : 'text-destructive',
+                )}
+              >
+                {catSum.toFixed(1)}%
+                {!catBalanced && (
+                  <span className="ml-2 text-xs font-normal">
+                    (100%가 아닙니다)
+                  </span>
+                )}
+              </span>
             </div>
           </div>
         )}
