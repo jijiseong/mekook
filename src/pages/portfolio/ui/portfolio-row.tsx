@@ -2,7 +2,7 @@ import { useEffect, useId } from 'react'
 import { Trash2 } from 'lucide-react'
 import { assetRepo } from '@/entities/asset'
 import { assetHoldingRepo } from '@/entities/asset-holding'
-import { Button } from '@/shared/ui/button'
+import { ConfirmButton } from '@/shared/ui/confirm-button'
 import { Input } from '@/shared/ui/input'
 import { ToggleGroup, ToggleGroupItem } from '@/shared/ui/toggle-group'
 import { CURRENCIES, type Currency } from '@/shared/lib/currency'
@@ -177,14 +177,18 @@ export function PortfolioRow({ row, displayCurrency, indented }: Props) {
       {/* 삭제 (종목만) */}
       <div className="flex justify-end">
         {isStock ? (
-          <Button
+          <ConfirmButton
             variant="ghost"
             size="icon"
-            onClick={remove}
+            confirmVariant="destructive"
+            title="종목 삭제"
+            description="이 종목을 삭제하시겠습니까? 되돌릴 수 없습니다."
+            confirmText="삭제"
+            onConfirm={remove}
             aria-label="종목 삭제"
           >
             <Trash2 className="size-4" />
-          </Button>
+          </ConfirmButton>
         ) : (
           <span className="inline-block w-8" />
         )}
