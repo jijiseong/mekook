@@ -34,6 +34,7 @@ export function AllocationPie({ items }: Props) {
         cy="50%"
         innerRadius={50}
         outerRadius={90}
+        paddingAngle={3}
         stroke="none"
       >
         {data.map((d) => (
