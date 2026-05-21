@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { getAssetColor } from '@/shared/lib/asset-color'
 import { usePortfolioData } from '../lib/use-portfolio-data'
 import { AllocationPie, type AllocationPieItem } from './allocation-pie'
@@ -32,11 +31,11 @@ export function PortfolioChartsSection() {
   })
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>현재 vs 목표</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col items-center gap-1 text-center mb-8">
+        <h2 className="text-xl font-semibold">현재 vs 목표</h2>
+      </div>
+      <div className="flex flex-col gap-6">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="flex flex-col items-center gap-3">
             <p className="text-muted-foreground text-sm font-medium">현재</p>
@@ -65,7 +64,7 @@ export function PortfolioChartsSection() {
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }

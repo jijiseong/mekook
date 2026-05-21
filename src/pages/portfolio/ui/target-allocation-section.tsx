@@ -9,13 +9,6 @@ import {
 } from '@/entities/category-target'
 import type { AssetCategory } from '@/entities/category-target'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/shared/ui/card'
-import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -111,14 +104,14 @@ export function TargetAllocationSection() {
   const hasAssets = stocks.length > 0 || !!cashAsset
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>목표 포트폴리오 비율</CardTitle>
-        <CardDescription>
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col items-center gap-1 text-center mb-8">
+        <h2 className="text-xl font-semibold">목표 포트폴리오 비율</h2>
+        <p className="text-muted-foreground text-sm">
           주식과 현금의 카테고리 비중을 설정하고, 종목별 세부 비중을 입력하세요.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+      </div>
+      <div>
         {!hasAssets ? (
           <div className="flex flex-col gap-3">
             <p className="text-muted-foreground text-sm">
@@ -200,8 +193,8 @@ export function TargetAllocationSection() {
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }
 
