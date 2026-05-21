@@ -36,22 +36,34 @@ export function PortfolioChartsSection() {
       <CardHeader>
         <CardTitle>현재 vs 목표</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-6">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="flex flex-col items-center gap-3">
-            <p className="text-muted-foreground text-sm font-medium">목표</p>
-            <AllocationPie items={targetItems} showLabels />
+            <p className="text-muted-foreground text-sm font-medium">현재</p>
+            <AllocationPie items={currentItems} />
           </div>
           <div className="flex flex-col items-center gap-3">
-            <p className="text-muted-foreground text-sm font-medium">현재</p>
-            <AllocationPie items={currentItems} showLabels />
+            <p className="text-muted-foreground text-sm font-medium">목표</p>
+            <AllocationPie items={targetItems} />
           </div>
           <div className="flex flex-col items-center gap-3">
             <p className="text-muted-foreground text-sm font-medium">
-              목표 vs 현재
+              현재 vs 목표
             </p>
             <PortfolioChart rows={rows} />
           </div>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
+          {allKeys.map((key) => (
+            <div key={key} className="flex items-center gap-1.5 text-xs">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-sm"
+                style={{ backgroundColor: getAssetColor(key, allKeys) }}
+              />
+              <span className="text-muted-foreground">{key}</span>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>

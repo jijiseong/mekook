@@ -10,12 +10,11 @@ export interface AllocationPieItem {
 
 interface Props {
   items: AllocationPieItem[]
-  showLabels?: boolean
 }
 
 const chartConfig = {} satisfies ChartConfig
 
-export function AllocationPie({ items, showLabels = false }: Props) {
+export function AllocationPie({ items }: Props) {
   const data = items
     .filter((i) => i.ratio > 0)
     .map((i) => ({ name: i.label, value: i.ratio, color: i.color }))
@@ -37,20 +36,10 @@ export function AllocationPie({ items, showLabels = false }: Props) {
           nameKey="name"
           cx="50%"
           cy="50%"
-          innerRadius={50}
+          innerRadius={28}
           outerRadius={90}
-          paddingAngle={3}
+          paddingAngle={2}
           stroke="none"
-          label={
-            showLabels
-              ? (props) => {
-                  const pct =
-                    typeof props.value === 'number' ? props.value * 100 : 0
-                  return pct >= 3 ? `${pct.toFixed(0)}%` : ''
-                }
-              : undefined
-          }
-          labelLine={showLabels}
         >
           {data.map((d) => (
             <Cell key={d.name} fill={d.color} />
