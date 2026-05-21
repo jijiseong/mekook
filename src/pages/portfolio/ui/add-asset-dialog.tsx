@@ -14,14 +14,14 @@ import {
 } from '@/shared/ui/dialog'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
-import { useCurrency } from '@/shared/lib/currency-context'
+import { DEFAULT_CURRENCY } from '@/shared/lib/currency'
 
 interface Props {
   existingSymbols: string[]
 }
 
 export function AddAssetDialog({ existingSymbols }: Props) {
-  const { currency } = useCurrency()
+  const currency = DEFAULT_CURRENCY
   const [open, setOpen] = useState(false)
   const [symbol, setSymbol] = useState('')
   const [name, setName] = useState('')

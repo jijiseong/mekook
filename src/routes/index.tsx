@@ -6,7 +6,7 @@ export const Route = createFileRoute('/')({
   // IndexedDB는 브라우저 전용 — 서버(SSR) 환경에서는 skip
   loader: () =>
     typeof indexedDB !== 'undefined'
-      ? assetRepo.ensureCashAsset('KRW')
+      ? assetRepo.ensureCashAsset('USD')
       : undefined,
   component: PortfolioPage,
 })

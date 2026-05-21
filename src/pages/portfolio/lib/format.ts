@@ -6,8 +6,7 @@ export function currencySymbol(currency: Currency): string {
 
 export function formatMoney(amount: number, currency: Currency): string {
   const sym = currencySymbol(currency)
-  const digits = currency === 'KRW' ? 0 : 2
-  return `${sym}${amount.toLocaleString(undefined, { maximumFractionDigits: digits })}`
+  return `${sym}${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
 }
 
 export function formatSignedMoney(amount: number, currency: Currency): string {

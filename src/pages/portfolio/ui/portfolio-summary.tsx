@@ -11,8 +11,6 @@ export function PortfolioSummary() {
     isBalanced,
     totalBuy,
     totalSell,
-    fxError,
-    fxLoading,
   } = usePortfolioData()
 
   return (
@@ -23,12 +21,6 @@ export function PortfolioSummary() {
           <CardTitle className="text-3xl font-semibold tabular-nums">
             {formatMoney(totalValueInDisplay, displayCurrency)}
           </CardTitle>
-          {fxError && (
-            <p className="text-destructive text-xs">환율 조회 실패</p>
-          )}
-          {fxLoading && (
-            <p className="text-muted-foreground text-xs">환율 불러오는 중…</p>
-          )}
         </div>
         <div className="flex flex-col items-end gap-1 text-sm">
           <div className="flex items-center gap-2">

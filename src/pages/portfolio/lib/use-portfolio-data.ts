@@ -4,25 +4,15 @@ import { useAssetHoldings } from '@/entities/asset-holding'
 import { useAssetTargets } from '@/entities/asset-target'
 import { useCategoryTargets } from '@/entities/category-target'
 import { quoteQueryOptions } from '@/entities/quote'
-import { fxRateQueryOptions } from '@/entities/fx-rate'
-import { useCurrency } from '@/shared/lib/currency-context'
-import type { Currency } from '@/shared/lib/currency'
+import { DEFAULT_CURRENCY, type Currency } from '@/shared/lib/currency'
 import { computeRebalance, type RebalanceRow } from './rebalance'
 import { effectiveTargetRatio } from './effective-targets'
-
-const SUPPORTED_CURRENCIES = ['KRW', 'USD'] satisfies readonly Currency[]
-
-function isSupportedCurrency(c: string): c is Currency {
-  return SUPPORTED_CURRENCIES.some((sc) => sc === c)
-}
 
 export interface PortfolioData {
   displayCurrency: Currency
   rows: RebalanceRow[]
   totalValueInDisplay: number
   targetRatioSum: number
-  fxLoading: boolean
-  fxError: Error | null
   stockRows: RebalanceRow[]
   cashRows: RebalanceRow[]
   isBalanced: boolean
@@ -31,7 +21,7 @@ export interface PortfolioData {
 }
 
 export function usePortfolioData(): PortfolioData {
-  const { currency: displayCurrency } = useCurrency()
+  const displayCurrency = DEFAULT_CURRENCY
   const assets = useAssets()
   const holdings = useAssetHoldings()
   const targets = useAssetTargets()
@@ -49,33 +39,6 @@ export function usePortfolioData(): PortfolioData {
     if (price !== undefined) livePriceBySymbol.set(s.symbol, price)
   })
 
-  const distinctCurrencies = Array.from(
-    new Set(
-      assets
-        .map((a) => a.currency)
-        .filter(isSupportedCurrency)
-        .concat(displayCurrency),
-    ),
-  )
-
-  const fxQueries = useQueries({
-    queries: distinctCurrencies.map((from) =>
-      fxRateQueryOptions(from, displayCurrency),
-    ),
-  })
-
-  const fxRateByCurrency = new Map<Currency, number | undefined>()
-  distinctCurrencies.forEach((from, i) => {
-    if (from === displayCurrency) {
-      fxRateByCurrency.set(from, 1)
-      return
-    }
-    fxRateByCurrency.set(from, fxQueries[i]?.data?.rate)
-  })
-
-  const fxLoading = fxQueries.some((q) => q.isLoading)
-  const fxError = fxQueries.find((q) => q.error)?.error ?? null
-
   const holdingByAsset = new Map(holdings.map((h) => [h.assetId, h]))
 
   const inputs = assets.map((asset) => {
@@ -84,11 +47,7 @@ export function usePortfolioData(): PortfolioData {
     const livePrice =
       asset.type === 'stock' ? livePriceBySymbol.get(asset.symbol) : undefined
     const target = effectiveTargetRatio(asset, targets, categoryTargets)
-    const assetCurrency: Currency = isSupportedCurrency(asset.currency)
-      ? asset.currency
-      : displayCurrency
-    const fxRate = fxRateByCurrency.get(assetCurrency)
-    return { asset, holding, livePrice, target, fxRate }
+    return { asset, holding, livePrice, target, fxRate: 1 }
   })
 
   const { rows, totalValueInDisplay, targetRatioSum } = computeRebalance(inputs)
@@ -109,8 +68,6 @@ export function usePortfolioData(): PortfolioData {
     rows,
     totalValueInDisplay,
     targetRatioSum,
-    fxLoading,
-    fxError,
     stockRows,
     cashRows,
     isBalanced,

@@ -26,7 +26,7 @@ export const assetRepo = {
         await db.assets.delete(id)
       },
     ),
-  ensureCashAsset: async (currency: Currency = 'KRW'): Promise<number> => {
+  ensureCashAsset: async (currency: Currency = 'USD'): Promise<number> => {
     const existing = await db.assets.where('type').equals('cash').first()
     if (existing?.id !== undefined) return existing.id
     const id = await db.assets.add({

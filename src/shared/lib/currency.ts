@@ -1,4 +1,4 @@
-export type Currency = 'KRW' | 'USD'
+export type Currency = 'USD'
 
 export interface CurrencyMeta {
   value: Currency
@@ -7,7 +7,6 @@ export interface CurrencyMeta {
 }
 
 export const CURRENCIES: readonly CurrencyMeta[] = [
-  { value: 'KRW', label: '원', symbol: '₩' },
   { value: 'USD', label: '달러', symbol: '$' },
 ] as const
 

@@ -41,7 +41,7 @@ function isTwelveDataQuote(d: unknown): d is TwelveDataQuote {
   )
 }
 
-const SUPPORTED_CURRENCIES = ['KRW', 'USD'] satisfies readonly Currency[]
+const SUPPORTED_CURRENCIES = ['USD'] satisfies readonly Currency[]
 
 function isCurrency(s: string): s is Currency {
   return SUPPORTED_CURRENCIES.some((c) => c === s)

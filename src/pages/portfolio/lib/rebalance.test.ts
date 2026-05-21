@@ -13,7 +13,7 @@ function stock(id: number, symbol: string, currency = 'USD'): Asset {
   }
 }
 
-function cash(id: number, currency: 'KRW' | 'USD' = 'KRW'): Asset {
+function cash(id: number, currency = 'USD'): Asset {
   return {
     id,
     type: 'cash',
@@ -70,32 +70,6 @@ describe('computeRebalance', () => {
     expect(row(result.rows, 1).targetValueInDisplay).toBe(900)
     expect(row(result.rows, 1).deltaInDisplay).toBe(-100)
     expect(row(result.rows, 1).deltaQty).toBeNull()
-  })
-
-  it('통화 환산: KRW 현금을 USD로 환산', () => {
-    const result = computeRebalance([
-      {
-        asset: stock(1, 'TSLA'),
-        holding: { assetId: 1, quantity: 5, price: 400, updatedAt: 0 },
-        livePrice: 400,
-        target: 0.5,
-        fxRate: 1,
-      },
-      {
-        asset: cash(2, 'KRW'),
-        holding: {
-          assetId: 2,
-          quantity: 2_700_000,
-          price: 1,
-          updatedAt: 0,
-        },
-        livePrice: undefined,
-        target: 0.5,
-        fxRate: 1 / 1350,
-      },
-    ])
-    expect(result.totalValueInDisplay).toBeCloseTo(4000, 0)
-    expect(row(result.rows, 0).deltaInDisplay).toBeCloseTo(0, 0)
   })
 
   it('빈 포트폴리오: 총액 0이면 currentRatio도 0', () => {
