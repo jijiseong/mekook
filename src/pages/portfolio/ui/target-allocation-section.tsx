@@ -120,9 +120,14 @@ export function TargetAllocationSection() {
       </CardHeader>
       <CardContent>
         {!hasAssets ? (
-          <p className="text-muted-foreground text-sm">
-            종목을 추가하면 목표 비율을 설정할 수 있습니다.
-          </p>
+          <div className="flex flex-col gap-3">
+            <p className="text-muted-foreground text-sm">
+              종목을 추가하면 목표 비율을 설정할 수 있습니다.
+            </p>
+            <div>
+              <AddAssetDialog existingSymbols={[]} />
+            </div>
+          </div>
         ) : (
           <div className="flex flex-col gap-2">
             {/* 주식 카테고리 */}
