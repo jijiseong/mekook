@@ -40,6 +40,8 @@ export function AllocationPie({ items }: Props) {
           outerRadius={90}
           paddingAngle={2}
           stroke="none"
+          label={({ name }) => name}
+          labelLine={false}
         >
           {data.map((d) => (
             <Cell key={d.name} fill={d.color} />

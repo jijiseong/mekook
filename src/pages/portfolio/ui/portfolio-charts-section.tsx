@@ -14,7 +14,7 @@ export function PortfolioChartsSection() {
     const key = row.asset.symbol || row.asset.name
     return {
       id: row.asset.id ?? key,
-      label: key,
+      label: row.asset.name,
       ratio: row.target,
       color: getAssetColor(key, allKeys),
     }
@@ -24,7 +24,7 @@ export function PortfolioChartsSection() {
     const key = row.asset.symbol || row.asset.name
     return {
       id: row.asset.id ?? key,
-      label: key,
+      label: row.asset.name,
       ratio: row.currentRatio,
       color: getAssetColor(key, allKeys),
     }

@@ -18,11 +18,15 @@ import { ConfirmButton } from '@/shared/ui/confirm-button'
 import { cn } from '@/shared/lib/utils'
 import { getAssetColor } from '@/shared/lib/asset-color'
 import { AddAssetDialog } from './add-asset-dialog'
+import {
+  TargetAllocationChart,
+  type TargetAllocationItem,
+} from './target-allocation-chart'
 
 interface DraftState {
-  stockCat: number // 0–1 fraction
-  cashCat: number // 0–1 fraction
-  subs: number[] // per-stock within-category fractions, parallel to stocks
+  stockCat: number
+  cashCat: number
+  subs: number[]
 }
 
 export function TargetAllocationSection() {
@@ -44,15 +48,10 @@ export function TargetAllocationSection() {
 
   const [draft, setDraft] = useState<DraftState | null>(null)
 
-  const stockCat =
-    draft?.subs?.length === stocks.length
-      ? (draft?.stockCat ?? storedStockCat)
-      : storedStockCat
-  const cashCat =
-    draft?.subs?.length === stocks.length
-      ? (draft?.cashCat ?? storedCashCat)
-      : storedCashCat
-  const subs = draft?.subs?.length === stocks.length ? draft.subs : storedSubs
+  const inSync = draft?.subs?.length === stocks.length
+  const stockCat = inSync ? (draft?.stockCat ?? storedStockCat) : storedStockCat
+  const cashCat = inSync ? (draft?.cashCat ?? storedCashCat) : storedCashCat
+  const subs = inSync && draft ? draft.subs : storedSubs
 
   const catSum = (stockCat + cashCat) * 100
   const catBalanced = Math.abs(catSum - 100) < 0.05
@@ -65,22 +64,21 @@ export function TargetAllocationSection() {
     ...(cashAsset ? [cashAsset.currency] : []),
   ]
 
+  const parseRatio = (raw: string) =>
+    Math.max(0, Number.isFinite(Number(raw)) ? Number(raw) : 0) / 100
+
   const updateCat = (category: AssetCategory, raw: string) => {
-    const v = Math.max(0, Number.isFinite(Number(raw)) ? Number(raw) : 0) / 100
-    const base = {
-      stockCat,
-      cashCat,
-      subs,
-    }
+    const v = parseRatio(raw)
+    const base = { stockCat, cashCat, subs }
     setDraft(
       category === 'stock' ? { ...base, stockCat: v } : { ...base, cashCat: v },
     )
   }
 
-  const updateSub = (i: number, raw: string) => {
-    const v = Math.max(0, Number.isFinite(Number(raw)) ? Number(raw) : 0) / 100
+  const updateSub = (idx: number, raw: string) => {
+    const v = parseRatio(raw)
     const nextSubs = [...subs]
-    nextSubs[i] = v
+    nextSubs[idx] = v
     setDraft({ stockCat, cashCat, subs: nextSubs })
   }
 
@@ -103,34 +101,94 @@ export function TargetAllocationSection() {
 
   const hasAssets = stocks.length > 0 || !!cashAsset
 
+  const categoryItems: TargetAllocationItem[] = [
+    { label: '주식', value: stockCat, color: 'var(--chart-1)' },
+    ...(cashAsset
+      ? [
+          {
+            label: `현금 (${cashAsset.currency})`,
+            value: cashCat,
+            color: 'var(--chart-2)',
+          },
+        ]
+      : []),
+  ]
+
+  const stockItems: TargetAllocationItem[] = stocks.map((s, i) => ({
+    label: s.name || s.symbol,
+    value: subs[i] ?? 0,
+    color: getAssetColor(s.symbol, allIds),
+  }))
+
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex flex-col items-center gap-1 text-center mb-8">
+      <div className="mb-8 flex flex-col items-center gap-1 text-center">
         <h2 className="text-xl font-semibold">목표 포트폴리오 비율</h2>
         <p className="text-muted-foreground text-sm">
           주식과 현금의 카테고리 비중을 설정하고, 종목별 세부 비중을 입력하세요.
         </p>
       </div>
-      <div>
-        {!hasAssets ? (
-          <div className="flex flex-col gap-3">
-            <p className="text-muted-foreground text-sm">
-              종목을 추가하면 목표 비율을 설정할 수 있습니다.
+
+      {!hasAssets ? (
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-muted-foreground text-sm">
+            종목을 추가하면 목표 비율을 설정할 수 있습니다.
+          </p>
+          <AddAssetDialog existingSymbols={[]} />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-muted-foreground text-sm font-medium">
+              카테고리
             </p>
-            <div>
-              <AddAssetDialog existingSymbols={[]} />
+            <TargetAllocationChart items={categoryItems} />
+            <div className="flex w-full max-w-sm flex-col gap-2">
+              <CategoryRow
+                label="주식"
+                value={stockCat}
+                onChange={(raw) => updateCat('stock', raw)}
+                onBlur={commit}
+              />
+              {cashAsset && (
+                <CategoryRow
+                  label={`현금 (${cashAsset.currency})`}
+                  value={cashCat}
+                  onChange={(raw) => updateCat('cash', raw)}
+                  onBlur={commit}
+                />
+              )}
+              <div className="flex items-center justify-between border-t pt-3 text-sm">
+                <span className="font-medium">합계</span>
+                <span
+                  className={cn(
+                    'font-semibold tabular-nums',
+                    catBalanced ? 'text-foreground' : 'text-destructive',
+                  )}
+                >
+                  {catSum.toFixed(1)}%
+                  {!catBalanced && (
+                    <span className="ml-2 text-xs font-normal">
+                      (100%가 아닙니다)
+                    </span>
+                  )}
+                </span>
+              </div>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {/* 주식 카테고리 */}
-            <CategoryRow
-              label="주식"
-              value={stockCat}
-              onChange={(raw) => updateCat('stock', raw)}
-              onBlur={commit}
-            />
-            <div className="ml-4 flex flex-col gap-2 border-l pl-4">
+
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-muted-foreground text-sm font-medium">
+              주식 종목별
+            </p>
+            {stocks.length === 0 ? (
+              <div className="text-muted-foreground flex aspect-square w-full max-w-xs items-center justify-center text-xs">
+                종목을 추가해주세요
+              </div>
+            ) : (
+              <TargetAllocationChart items={stockItems} />
+            )}
+            <div className="flex w-full max-w-sm flex-col gap-2">
               {stocks.map((s, i) => (
                 <StockSubRow
                   key={s.id ?? s.symbol}
@@ -141,66 +199,38 @@ export function TargetAllocationSection() {
                   onBlur={commit}
                 />
               ))}
-              <div className="pt-1">
-                <AddAssetDialog
-                  existingSymbols={stocks.map((s) => s.symbol.toUpperCase())}
-                />
-              </div>
               {stocks.length > 0 && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">자식 합계</span>
+                <div className="flex items-center justify-between border-t pt-3 text-sm">
+                  <span className="font-medium">합계</span>
                   <span
                     className={cn(
-                      'tabular-nums',
-                      subBalanced ? 'text-muted-foreground' : 'text-amber-600',
+                      'font-semibold tabular-nums',
+                      subBalanced ? 'text-foreground' : 'text-amber-600',
                     )}
                   >
                     {subSum.toFixed(1)}%
                     {!subBalanced && (
-                      <span className="ml-1">(100%가 아닙니다)</span>
+                      <span className="ml-2 text-xs font-normal">
+                        (100%가 아닙니다)
+                      </span>
                     )}
                   </span>
                 </div>
               )}
-            </div>
-
-            {/* 현금 카테고리 */}
-            {cashAsset && (
-              <CategoryRow
-                label={`현금 (${cashAsset.currency})`}
-                value={cashCat}
-                onChange={(raw) => updateCat('cash', raw)}
-                onBlur={commit}
+              <AddAssetDialog
+                existingSymbols={stocks.map((s) => s.symbol.toUpperCase())}
               />
-            )}
-
-            {/* 합계 */}
-            <div className="flex items-center justify-between border-t pt-3 text-sm">
-              <span className="font-medium">합계</span>
-              <span
-                className={cn(
-                  'font-semibold tabular-nums',
-                  catBalanced ? 'text-foreground' : 'text-destructive',
-                )}
-              >
-                {catSum.toFixed(1)}%
-                {!catBalanced && (
-                  <span className="ml-2 text-xs font-normal">
-                    (100%가 아닙니다)
-                  </span>
-                )}
-              </span>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   )
 }
 
 interface CategoryRowProps {
   label: string
-  value: number // 0–1 fraction
+  value: number
   onChange: (raw: string) => void
   onBlur: () => void
 }
@@ -233,7 +263,7 @@ function CategoryRow({ label, value, onChange, onBlur }: CategoryRowProps) {
 interface StockSubRowProps {
   stock: Asset
   color: string
-  value: number // 0–1 fraction (within-category)
+  value: number
   onChange: (raw: string) => void
   onBlur: () => void
 }

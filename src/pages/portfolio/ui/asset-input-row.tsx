@@ -1,8 +1,5 @@
 import { useEffect, useId } from 'react'
-import { Trash2 } from 'lucide-react'
-import { assetRepo } from '@/entities/asset'
 import { assetHoldingRepo } from '@/entities/asset-holding'
-import { ConfirmButton } from '@/shared/ui/confirm-button'
 import {
   InputGroup,
   InputGroupAddon,
@@ -45,11 +42,6 @@ export function AssetInputRow({ row, displayCurrency, color }: Props) {
     })
   }
 
-  const remove = () => {
-    if (asset.id === undefined) return
-    void assetRepo.remove(asset.id)
-  }
-
   const inputId = useId()
 
   if (isCash) {
@@ -78,7 +70,7 @@ export function AssetInputRow({ row, displayCurrency, color }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
+    <div className="flex justify-between flex-1 ">
       <Label htmlFor={inputId} className="flex items-center gap-2">
         {color && (
           <span
@@ -97,6 +89,10 @@ export function AssetInputRow({ row, displayCurrency, color }: Props) {
         </span>
       </Label>
       <div className="flex items-center gap-2">
+        <span className="text-muted-foreground text-xs whitespace-nowrap">
+          @ {formatMoney(effectivePrice, assetCurrency)}
+        </span>
+
         <InputGroup className="w-32">
           <InputGroupInput
             id={inputId}
@@ -112,22 +108,7 @@ export function AssetInputRow({ row, displayCurrency, color }: Props) {
           />
           <InputGroupAddon align="inline-end">주</InputGroupAddon>
         </InputGroup>
-        <span className="text-muted-foreground text-xs whitespace-nowrap">
-          @ {formatMoney(effectivePrice, assetCurrency)}
-        </span>
       </div>
-      <ConfirmButton
-        variant="ghost"
-        size="icon"
-        confirmVariant="destructive"
-        title="종목 삭제"
-        description="이 종목을 삭제하시겠습니까? 되돌릴 수 없습니다."
-        confirmText="삭제"
-        onConfirm={remove}
-        aria-label="종목 삭제"
-      >
-        <Trash2 className="size-4" />
-      </ConfirmButton>
     </div>
   )
 }
