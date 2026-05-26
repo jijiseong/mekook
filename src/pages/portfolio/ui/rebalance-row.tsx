@@ -51,11 +51,26 @@ export function RebalanceRow({ row, displayCurrency, color }: Props) {
               {isStock ? (row.deltaInDisplay > 0 ? '매수' : '매도') : null}
               {isCash && (row.deltaInDisplay > 0 ? ' 보충' : ' 줄이기')}
             </span>
-            {isStock && row.deltaQty !== null && Math.abs(row.deltaQty) > 0 && (
-              <span className="text-muted-foreground text-xs">
-                ≈ {Math.abs(row.deltaQty).toFixed(2)}주
-              </span>
-            )}
+            {(() => {
+              const diff = (row.currentRatio - row.target) * 100
+              if (Math.abs(diff) < 0.05) return null
+              const absDiff = Math.abs(diff)
+              const formatted = absDiff.toFixed(1).replace(/\.0$/, '')
+              return (
+                <span
+                  className={cn(
+                    'text-xs',
+                    absDiff >= 3
+                      ? diff > 0
+                        ? 'text-rose-600'
+                        : 'text-emerald-600'
+                      : 'text-muted-foreground',
+                  )}
+                >
+                  {formatted}% {diff > 0 ? '줄여야 해요' : '늘려야 해요'}
+                </span>
+              )
+            })()}
           </div>
         )}
       </div>
