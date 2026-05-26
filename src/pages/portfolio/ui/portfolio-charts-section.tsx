@@ -10,13 +10,16 @@ export function PortfolioChartsSection() {
 
   const allKeys = rows.map((r) => r.asset.symbol || r.asset.name)
 
+  const colorOf = (key: string, type: string) =>
+    type === 'cash' ? 'var(--chart-2)' : getAssetColor(key, allKeys)
+
   const targetItems: AllocationPieItem[] = rows.map((row) => {
     const key = row.asset.symbol || row.asset.name
     return {
       id: row.asset.id ?? key,
       label: row.asset.name,
       ratio: row.target,
-      color: getAssetColor(key, allKeys),
+      color: colorOf(key, row.asset.type),
     }
   })
 
@@ -26,7 +29,7 @@ export function PortfolioChartsSection() {
       id: row.asset.id ?? key,
       label: row.asset.name,
       ratio: row.currentRatio,
-      color: getAssetColor(key, allKeys),
+      color: colorOf(key, row.asset.type),
     }
   })
 
@@ -43,7 +46,7 @@ export function PortfolioChartsSection() {
           </div>
           <div className="flex flex-col items-center gap-3">
             <p className="text-muted-foreground text-sm font-medium">목표</p>
-            <AllocationPie items={targetItems} />
+            <AllocationPie items={targetItems} hatched />
           </div>
           <div className="flex flex-col items-center gap-3">
             <p className="text-muted-foreground text-sm font-medium">
@@ -54,15 +57,18 @@ export function PortfolioChartsSection() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
-          {allKeys.map((key) => (
-            <div key={key} className="flex items-center gap-1.5 text-xs">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-sm"
-                style={{ backgroundColor: getAssetColor(key, allKeys) }}
-              />
-              <span className="text-muted-foreground">{key}</span>
-            </div>
-          ))}
+          {rows.map((row) => {
+            const key = row.asset.symbol || row.asset.name
+            return (
+              <div key={key} className="flex items-center gap-1.5 text-xs">
+                <span
+                  className="h-2.5 w-2.5 shrink-0 rounded-sm"
+                  style={{ backgroundColor: colorOf(key, row.asset.type) }}
+                />
+                <span className="text-muted-foreground">{key}</span>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

@@ -36,11 +36,16 @@ export function PortfolioChart({ rows }: Props) {
 
   const allKeys = rows.map(assetKey)
 
+  const colorOf = (row: RebalanceRow) =>
+    row.asset.type === 'cash'
+      ? 'var(--chart-2)'
+      : getAssetColor(assetKey(row), allKeys)
+
   // 안쪽: 목표 비중 (기준)
   const innerData = rows.map((row) => ({
     name: assetKey(row),
     value: row.target * 100,
-    color: getAssetColor(assetKey(row), allKeys),
+    color: colorOf(row),
   }))
 
   // 바깥: 현재 비중 (현재 보유 상태)
@@ -51,13 +56,35 @@ export function PortfolioChart({ rows }: Props) {
       name: assetKey(row),
       value: current,
       delta: current - target,
-      color: getAssetColor(assetKey(row), allKeys),
+      color: colorOf(row),
     }
   })
 
   return (
     <ChartContainer config={chartConfig} className="h-[220px] w-full">
       <PieChart>
+        <defs>
+          {innerData.map((d) => (
+            <pattern
+              key={d.name}
+              id={`dual-hatch-${d.name}`}
+              patternUnits="userSpaceOnUse"
+              width={6}
+              height={6}
+              patternTransform="rotate(45)"
+            >
+              <line
+                x1={0}
+                y1={0}
+                x2={0}
+                y2={6}
+                stroke={d.color}
+                strokeWidth={10}
+                strokeOpacity={1}
+              />
+            </pattern>
+          ))}
+        </defs>
         {/* 안쪽: 목표 비중 */}
         <Pie
           data={innerData}
@@ -70,7 +97,7 @@ export function PortfolioChart({ rows }: Props) {
           stroke="none"
         >
           {innerData.map((d) => (
-            <Cell key={d.name} fill={d.color} fillOpacity={0.4} />
+            <Cell key={d.name} fill={`url(#dual-hatch-${d.name})`} />
           ))}
         </Pie>
 
@@ -137,7 +164,12 @@ export function PortfolioChart({ rows }: Props) {
                 <div className="flex items-center gap-1.5 font-medium">
                   <span
                     className="h-2 w-2 shrink-0 rounded-sm"
-                    style={{ backgroundColor: getAssetColor(name, allKeys) }}
+                    style={{
+                      backgroundColor:
+                        row.asset.type === 'cash'
+                          ? 'var(--chart-2)'
+                          : getAssetColor(name, allKeys),
+                    }}
                   />
                   {name}
                 </div>
